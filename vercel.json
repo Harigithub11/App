@@ -1,14 +1,5 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "app.py",
-      "use": "@vercel/python",
-      "config": {
-        "includeFiles": ["spotify_dataset.csv"]
-      }
-    }
-  ],
   "routes": [
     {
       "src": "/(.*)",
