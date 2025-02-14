@@ -5,19 +5,28 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# Load dataset (ensure `spotify_dataset.csv` is in the same directory)
+# Google Drive file ID
+FILE_ID = "1fdXi8-RizmcaL6zMnpWY4G8-VTyCmvJa"
+
+# Construct the direct download URL
+CSV_URL = f"https://drive.google.com/uc?id={FILE_ID}"
+
+# Load dataset dynamically
 try:
-    songs = pd.read_csv("spotify_dataset.csv")
-except FileNotFoundError:
+    songs = pd.read_csv(CSV_URL)
+    print("Dataset loaded successfully!")
+except Exception as e:
     songs = None
-    print("Error: Dataset file not found. Ensure 'spotify_dataset.csv' is in the project directory.")
+    print("Error loading dataset:", e)
 
 # Recommender Class
 class ContentBasedRecommender:
     def __init__(self, data):
         self.data = data
-        self.numeric_features = ['danceability', 'energy', 'speechiness', 'acousticness', 'instrumentalness', 
-                                 'liveness', 'valence', 'tempo', 'duration_ms']
+        self.numeric_features = [
+            'danceability', 'energy', 'speechiness', 'acousticness', 
+            'instrumentalness', 'liveness', 'valence', 'tempo', 'duration_ms'
+        ]
 
         # Normalize numeric features
         self.normalized_data = self.data.copy()
@@ -64,7 +73,7 @@ if songs is not None:
 # API Route
 @app.route("/")
 def home():
-    return "Welcome to the Spotify Recommendation API!"
+    return jsonify({"message": "Welcome to the Spotify Recommendation API!"})
 
 @app.route("/recommend", methods=["GET"])
 def recommend():
